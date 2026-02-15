@@ -37,7 +37,13 @@ class SecurityRequest(BaseModel):
 # Utility Functions
 # =========================
 def get_client_key(request: Request, user_id: str):
-    ip = request.client.host
+    forwarded = request.headers.get("x-forwarded-for")
+    
+    if forwarded:
+        ip = forwarded.split(",")[0].strip()
+    else:
+        ip = request.client.host
+
     return f"{user_id}-{ip}"
 
 
